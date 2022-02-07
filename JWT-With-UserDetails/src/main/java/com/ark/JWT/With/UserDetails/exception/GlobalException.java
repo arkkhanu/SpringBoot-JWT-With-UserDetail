@@ -1,27 +1,36 @@
 package com.ark.JWT.With.UserDetails.exception;
 
-import com.ark.JWT.With.UserDetails.domain.BaseRespose;
-import com.ark.JWT.With.UserDetails.domain.ExceptionResponse;
+import com.ark.JWT.With.UserDetails.domain.core_model.ExceptionResponse;
 import com.ark.JWT.With.UserDetails.exception.inner_exception.UserAlreadyFoundException;
 import com.ark.JWT.With.UserDetails.exception.inner_exception.UserNotFoundException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.security.sasl.AuthenticationException;
 import java.util.Date;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalException {
 
-    @ExceptionHandler(value = {UserNotFoundException.class, UsernameNotFoundException.class})
+//    @ExceptionHandler(value = {UsernameNotFoundException.class})
+//    private ResponseEntity<?> handleUserFoundException(UserNotFoundException userNotFoundException, WebRequest webRequest) {
+//        return new ResponseEntity<>(new ExceptionResponse(new Date(), String.valueOf(HttpStatus.FORBIDDEN.value()), userNotFoundException.getMessage()), HttpStatus.FORBIDDEN);
+//    }
+
+    @ExceptionHandler(value = {AuthenticationException.class})
+    private ResponseEntity<?> handlAuthException(AuthenticationException authenticationException, WebRequest webRequest) {
+        return new ResponseEntity<>(new ExceptionResponse(new Date(), String.valueOf(HttpStatus.FORBIDDEN.value()), authenticationException.getMessage()), HttpStatus.FORBIDDEN);
+    }
+
+
+    @ExceptionHandler(value = {UserNotFoundException.class})
     private ResponseEntity<?> handleUserNotFoundException(UserNotFoundException userNotFoundException, WebRequest webRequest) {
         return new ResponseEntity<>(new ExceptionResponse(new Date(), String.valueOf(HttpStatus.FORBIDDEN.value()), userNotFoundException.getMessage()), HttpStatus.FORBIDDEN);
     }

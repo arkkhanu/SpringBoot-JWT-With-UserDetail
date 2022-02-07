@@ -1,7 +1,9 @@
 package com.ark.JWT.With.UserDetails.security;
 
 import com.ark.JWT.With.UserDetails.domain.User;
-import com.auth0.jwt.algorithms.Algorithm;
+import com.ark.JWT.With.UserDetails.security.jwt_algorith.JwtAlgorithm;
+import com.ark.JWT.With.UserDetails.utils.StringConstant;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,11 +16,26 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    JwtAlgorithm jwtAlgorithm;
+
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
+
+        this.authenticationManager = authenticationManager;
+    }
+
+    public CustomAuthenticationFilter() {
+    }
+
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -37,6 +54,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                                             Authentication authResult) throws IOException, ServletException {
 //        super.successfulAuthentication(request, response, chain, authResult);
         User user = (User) authResult.getPrincipal();
-//        Algorithm algorithm =Algorithm
+        String accessToken = jwtAlgorithm.tokenGenerate(user, request);
+        String refreshToken = jwtAlgorithm.refreshToken(user, request);
+        Map<String, String> token = new HashMap<>();
+        token.put(StringConstant.ACCESS_TOKEN, accessToken);
+        token.put(StringConstant.REFRESH_TOKEN, refreshToken);
+        response.setContentType(StringConstant.APPLICATION_JSON_VALUE);
+        new ObjectMapper().writeValue(response.getOutputStream(), token);
+
     }
 }

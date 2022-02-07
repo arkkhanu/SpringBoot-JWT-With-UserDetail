@@ -1,4 +1,4 @@
-package com.ark.JWT.With.UserDetails.domain;
+package com.ark.JWT.With.UserDetails.domain.core_model;
 
 import java.util.Date;
 
