@@ -1,9 +1,11 @@
 package com.ark.JWT.With.UserDetails.security;
 
+import com.ark.JWT.With.UserDetails.security.jwt_algorith.JwtGeneration;
 import com.ark.JWT.With.UserDetails.services.UserService;
 import com.ark.JWT.With.UserDetails.utils.URLConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
+//@ComponentScan({"com.ark.JWT.With.UserDetails.security.jwt_algorith.JwtGeneration"})
 @Component
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -23,6 +26,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserService userService;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private JwtGeneration jwtGeneration;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -50,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().anyRequest().authenticated()
                 .and()
 //                .addFilter(new CustomAuthenticationFilter())
-                .addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new CustomAuthorizationFilter(jwtGeneration), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean

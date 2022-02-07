@@ -26,19 +26,19 @@ public class UserAPI {
     @PostMapping(value = "/register")
     private ResponseEntity<BaseRespose<User>> saveUser(@Valid @RequestBody User user) throws Exception {
         User _u = userService.saveUser(user);
-        return ResponseEntity.ok(new BaseRespose<>(new Date(), null, String.valueOf(HttpStatus.OK.value()), _u));
+        return ResponseEntity.ok(new BaseRespose<>(new Date(), null, String.valueOf(HttpStatus.OK.value()),null,null, _u));
     }
 
     @GetMapping("/getAllUsers")
     private ResponseEntity<?> getAllUsers() {
         List<User> userList = userService.getAllUsers();
 
-        return new ResponseEntity<>(new BaseRespose<>(new Date(), null, String.valueOf(HttpStatus.OK.value()), userList), HttpStatus.OK);
+        return new ResponseEntity<>(new BaseRespose<>(new Date(), null, String.valueOf(HttpStatus.OK.value()),null,null, userList), HttpStatus.OK);
     }
     @GetMapping("/getAll")
     private ResponseEntity<?> getAll() {
         List<User> userList = userService.getAllUsers();
 
-        return new ResponseEntity<>(new BaseRespose<>(new Date(), null, String.valueOf(HttpStatus.OK.value()), userList), HttpStatus.OK);
+        return new ResponseEntity<>(new BaseRespose<>(new Date(), null, String.valueOf(HttpStatus.OK.value()),null,null, userList), HttpStatus.OK);
     }
 }

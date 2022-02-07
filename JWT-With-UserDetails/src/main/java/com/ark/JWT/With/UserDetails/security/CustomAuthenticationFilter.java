@@ -1,7 +1,7 @@
 package com.ark.JWT.With.UserDetails.security;
 
 import com.ark.JWT.With.UserDetails.domain.User;
-import com.ark.JWT.With.UserDetails.security.jwt_algorith.JwtAlgorithm;
+import com.ark.JWT.With.UserDetails.security.jwt_algorith.JwtGeneration;
 import com.ark.JWT.With.UserDetails.utils.StringConstant;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    JwtAlgorithm jwtAlgorithm;
+    JwtGeneration jwtGeneration;
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
 
@@ -54,8 +54,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                                             Authentication authResult) throws IOException, ServletException {
 //        super.successfulAuthentication(request, response, chain, authResult);
         User user = (User) authResult.getPrincipal();
-        String accessToken = jwtAlgorithm.tokenGenerate(user, request);
-        String refreshToken = jwtAlgorithm.refreshToken(user, request);
+        String accessToken = jwtGeneration.tokenGenerate(user, request);
+        String refreshToken = jwtGeneration.refreshToken(user, request);
         Map<String, String> token = new HashMap<>();
         token.put(StringConstant.ACCESS_TOKEN, accessToken);
         token.put(StringConstant.REFRESH_TOKEN, refreshToken);
