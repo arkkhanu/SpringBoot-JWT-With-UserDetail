@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImp implements UserService {
@@ -42,6 +43,30 @@ public class UserServiceImp implements UserService {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return user;
+    }
+
+    @Override
+    public User getUserByUserName(String userName) throws Exception {
+        if (userName == null || userName.isBlank()) {
+            throw new Exception("Username shouldn't be empty or null");
+        }
+        User _ifFoundUser = userRepository.findByUserName(userName);
+        if (_ifFoundUser == null) {
+            throw new UsernameNotFoundException("User Not Found");
+        }
+        return _ifFoundUser;
+    }
+
+    @Override
+    public User getUserByUserId(String userId) throws Exception {
+        if (userId == null || userId.isBlank()) {
+            throw new Exception("UserId shouldn't be empty or null");
+        }
+        Optional<User> _ifFoundUser = userRepository.findById(Long.parseLong(userId));
+        if (_ifFoundUser.isEmpty()) {
+            throw new UsernameNotFoundException("User Not Found");
+        }
+        return _ifFoundUser.get();
     }
 
     @Override

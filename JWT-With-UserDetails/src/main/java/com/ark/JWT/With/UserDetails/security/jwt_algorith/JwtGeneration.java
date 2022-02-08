@@ -28,7 +28,7 @@ public class JwtGeneration {
      * 600 / 60 = 10 Minutes
      * */
 
-    private final int expireTime = 5 * 60 * 1000; // 5 Minutues
+    private final int expireTime = 50 * 60 * 1000; // 50 Minutues
     private final int refreshTokenTime = 10 * 60 * 1000; // 10 Minutues
 
 

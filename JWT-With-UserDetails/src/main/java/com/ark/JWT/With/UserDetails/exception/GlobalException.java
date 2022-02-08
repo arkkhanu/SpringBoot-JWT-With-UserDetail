@@ -37,13 +37,11 @@ public class GlobalException {
 
     @ExceptionHandler(value = {UserAlreadyFoundException.class})
     private ResponseEntity<?> handleUserAlreadyFoundException(UserAlreadyFoundException userAlreadyFoundException, WebRequest webRequest) {
-
         return new ResponseEntity<>(new ExceptionResponse(new Date(), String.valueOf(HttpStatus.NOT_FOUND.value()), userAlreadyFoundException.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     private ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException methodArgumentNotValidException, WebRequest webRequest) {
-
         String message = methodArgumentNotValidException.getAllErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.joining(", "));
         return new ResponseEntity<>(new ExceptionResponse(new Date(), String.valueOf(HttpStatus.NOT_FOUND.value()), message), HttpStatus.BAD_REQUEST);
     }
@@ -54,6 +52,12 @@ public class GlobalException {
         return new ResponseEntity<>(new ExceptionResponse(new Date(), String.valueOf(HttpStatus.NOT_FOUND.value()), message), HttpStatus.BAD_REQUEST);
     }
 
+
+    @ExceptionHandler(value = {NumberFormatException.class})
+    private ResponseEntity<?> handleNumberFormatException(NumberFormatException numberFormatException, WebRequest webRequest) {
+        String message = numberFormatException.getMessage().substring(0, numberFormatException.getMessage().indexOf(":"));
+        return new ResponseEntity<>(new ExceptionResponse(new Date(), String.valueOf(HttpStatus.NOT_FOUND.value()), message), HttpStatus.BAD_REQUEST);
+    }
 //    @ExceptionHandler(value = {AuthenticationException.class})
 //    private ResponseEntity<?> handleUnauthorized(AuthenticationException authenticationException, WebRequest webRequest) {
 //        String message = authenticationException.getMessage().substring(0, authenticationException.getMessage().indexOf(":"));

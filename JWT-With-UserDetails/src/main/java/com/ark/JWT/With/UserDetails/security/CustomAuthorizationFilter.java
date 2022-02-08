@@ -1,17 +1,15 @@
 package com.ark.JWT.With.UserDetails.security;
 
+import com.ark.JWT.With.UserDetails.api.APIEndPoints;
 import com.ark.JWT.With.UserDetails.domain.core_model.ExceptionResponse;
 import com.ark.JWT.With.UserDetails.security.jwt_algorith.JwtGeneration;
 import com.ark.JWT.With.UserDetails.utils.StringConstant;
-import com.ark.JWT.With.UserDetails.utils.URLConstant;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -22,9 +20,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 
-//@ComponentScan({"com.ark.JWT.With.UserDetails.security.jwt_algorith.JwtGeneration"})
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
-//    @Autowired
+
     private JwtGeneration jwtGeneration;
 
     public CustomAuthorizationFilter(JwtGeneration jwtGeneration) {
@@ -32,12 +29,20 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, @NotNull HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 //         UnBlocked URLs
-        if (request.getServletPath().startsWith(URLConstant.URL_BaseTOKEN) ||
-                request.getServletPath().equals(URLConstant.URL_User + "/register")) {
+
+//        if (request.getServletPath().equals(APIEndPoints.URL_BASE_USER + APIEndPoints.URL_REGISTER_USER)) {
+//            filterChain.doFilter(request, response);
+//        }
+
+
+        if (request.getServletPath().equals(APIEndPoints.URL_BASE_USER + APIEndPoints.URL_REGISTER_USER) ||
+                request.getServletPath().equals(APIEndPoints.URL_BASE_USER + APIEndPoints.URL_AUTHENTICATE_USER)
+        ) {
             filterChain.doFilter(request, response);
-        } else {
+        }
+        else {
             String authorizationHeader = request.getHeader(StringConstant.AUTHORIZATION);
             if (authorizationHeader != null && authorizationHeader.startsWith(StringConstant.BEARER)) {
                 try {
@@ -47,24 +52,20 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userName, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     filterChain.doFilter(request, response);
-                } catch (Exception exception) {
+                }
+                catch (Exception exception) {
                     response.setHeader("Error", exception.getMessage());
                     response.setStatus(HttpStatus.FORBIDDEN.value());
-//                    Map<String, String> errorMap = new HashMap<>();
-//                    errorMap.put("Error_Message", exception.getMessage());
-//                    response.setContentType(StringConstant.APPLICATION_JSON_VALUE);
-//                    new ObjectMapper().writeValue(response.getOutputStream(), errorMap);
                     response.setContentType(StringConstant.APPLICATION_JSON_VALUE);
                     ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), String.valueOf(HttpStatus.FORBIDDEN.value()), exception.getMessage());
                     new ObjectMapper().writeValue(response.getOutputStream(), exceptionResponse);
                     filterChain.doFilter(request, response);
                 }
 
-            } else {
+            }
+            else {
                 response.setHeader("Error", "Authorization Token Missing");
                 response.setStatus(HttpStatus.FORBIDDEN.value());
-//                Map<String, String> errorMap = new HashMap<>();
-//                errorMap.put("Error_Message", "Authorization Token is Missing From Header");
                 response.setContentType(StringConstant.APPLICATION_JSON_VALUE);
                 ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), String.valueOf(HttpStatus.FORBIDDEN.value()), "Authorization Token is Missing From Header");
                 new ObjectMapper().writeValue(response.getOutputStream(), exceptionResponse);

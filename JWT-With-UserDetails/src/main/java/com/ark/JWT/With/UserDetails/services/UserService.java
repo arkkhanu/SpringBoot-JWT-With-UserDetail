@@ -10,7 +10,8 @@ import java.util.List;
 public interface UserService  extends UserDetailsService{
 
     User saveUser(User user) throws Exception;
-
+    User getUserByUserName(String  userName) throws Exception;
+    User getUserByUserId(String  userId) throws Exception;
     List<User> getAllUsers();
 
 }

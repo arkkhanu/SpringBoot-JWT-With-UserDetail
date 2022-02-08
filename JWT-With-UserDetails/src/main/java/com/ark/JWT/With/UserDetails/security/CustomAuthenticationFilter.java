@@ -19,8 +19,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Autowired
     private AuthenticationManager authenticationManager;
